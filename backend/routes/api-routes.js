@@ -37,6 +37,7 @@ router.post('/:user_id', async (req, res) => {
 router.put('/:id', async (req, res, next) => {
     try{
         if(!req.params.id){throw('invalid user')}
+        if(!req.body.username || !req.body.password){throw('invalid request')}
         Todo_id = req.params.id;
         title = req.body.title;
         body = req.body.body;

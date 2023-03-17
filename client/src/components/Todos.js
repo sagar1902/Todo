@@ -23,6 +23,7 @@ export default function Todos() {
     const [adddue, setAdddue] = useState(new Date());
     const [editingID, setEditingID] = useState(null);
 
+
     const getTodos = async () => {
         let result = await fetch(`http://localhost:8000/api/${localStorage.getItem('user_id')}`, {
             method: "GET",
@@ -31,13 +32,17 @@ export default function Todos() {
             }
         });
         let parsedData = await result.json();
-        sortByDate(parsedData.search_results);
-        setTodos(parsedData.search_results);
+        let array = parsedData.search_results.filter((e)=>{let d=new Date(e.due);return d>Date.now()})
+        sortByDate(array)
+        setTodos(array)
+        // sortByDate(parsedData.search_results);
+        // setTodos(parsedData.search_results);
         setLoad(false);
 
     }
 
     const addTask = async () => {
+        setEditingID(null);
         let result = await fetch(`http://localhost:8000/api/${localStorage.getItem('user_id')}`, {
             method: 'POST',
             body: JSON.stringify({
@@ -76,14 +81,14 @@ export default function Todos() {
             headers: { "Content-type": "application/json" }
         });
         result = await result.json();
-        if(!result.error){
+        if(result.status===200){
             // Todos.forEach((value)=>{
             //     if(value._id===id){value.title=title, value.body}
             // });
             getTodos();
             setEditingID(null);
         }else{
-            console.log('unmodified')
+            return true;
         }
     }
 
@@ -95,7 +100,7 @@ export default function Todos() {
     return (
         <div className="Todos my-5">
             <button type="button" className="btn btn-danger" onClick={() => { localStorage.removeItem('user_id'); navigate('/login') }}>Logout</button>
-            <button type="button" className="btn btn-success" onClick={() => { setAdd(true) }}>New Task</button>
+            <button type="button" className="btn btn-success" onClick={() => { setAdd(true);setEditingID(null) }}>New Task</button>
             {add && (
                 <div className="card my-3">
                     <div className="card-body">
@@ -109,7 +114,7 @@ export default function Todos() {
                         <hr />
                         <div className="input-group mb-3">
                             <span className="input-group-text" id="basic-addon1">message</span>
-                            <input type="text" className="form-control" placeholder="Your message" aria-label="Your message" aria-describedby="basic-addon1" onChange={(e) => { setAddbody(e.target.value) }} />
+                            <textarea type="text" className="form-control" placeholder="Your message" aria-label="Your message" aria-describedby="basic-addon1" onChange={(e) => { setAddbody(e.target.value) }} />
                         </div>
                     </div>
                 </div>)}

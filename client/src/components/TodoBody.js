@@ -4,6 +4,7 @@ import DateTimePicker from 'react-datetime-picker';
 export default function TodoBody(props) {
     let time = new Date(props.time);
     let due = new Date(props.due);
+    const [update_error, setUpdate_error] = useState(false);
     // const [editing, setEditing] = useState(false);
     const [addtitle, setAddtitle] = useState(props.title);
     const [addbody, setAddbody] = useState(props.body);
@@ -29,19 +30,19 @@ export default function TodoBody(props) {
         return (
                 <>
             <div className="card my-3">
-                    <div className="card-body">
+                    <div className="card-body" style={{backgroundColor:update_error?'#f5efef':'#fff', boxShadow:update_error?'-1px 2px 40px -9px #df1818':null}}>
                         <div className="input-group mb-3" style={{ width: '40%' }}>
                             <span className="input-group-text" id="basic-addon1">Title</span>
                             <input type="text" className="form-control" value={addtitle} aria-label="Title" aria-describedby="basic-addon1" onChange={(e) => { setAddtitle(e.target.value) }} />
                         </div>
-                        <button type="button" className="btn btn-warning" onClick={() => { props.updateTodo(props.id, addtitle, addbody, adddue) }}>update</button>
+                        <button type="button" className="btn btn-warning" onClick={() => { setUpdate_error(props.updateTodo(props.id, addtitle, addbody, adddue)) }}>update</button>
                         <button type="button" className="btn btn-danger" onClick={() => { props.cancelupdateTodo() }}>cancel</button>
                         <DateTimePicker onChange={setAdddue} value={adddue} />
                         {/* <input type="time" id="appt" name="appt" onChange={(e)=>{setAdddue(Date(e.target.value))}}/> */}
                         <hr />
                         <div className="input-group mb-3">
                             <span className="input-group-text" id="basic-addon1">message</span>
-                            <input type="text" className="form-control" value={addbody} aria-label="Your message" aria-describedby="basic-addon1" onChange={(e) => { setAddbody(e.target.value) }} />
+                            <textarea type="text" className="form-control" value={addbody} aria-label="Your message" aria-describedby="basic-addon1" onChange={(e) => { setAddbody(e.target.value) }} />
                         </div>
                     </div>
                     </div>

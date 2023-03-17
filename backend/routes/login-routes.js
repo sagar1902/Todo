@@ -5,9 +5,9 @@ const User = require('../models/User');
 
 router.post('/login', async(req, res)=>{
     try{
-        if(!req.body.username || !req.body.password){throw('invalid request to server')}
+        if(!req.body.username || !req.body.password){throw({user:req.body.username?false:true, password:req.body.password?false:true})}
         const result = await User.find({username: req.body.username, password: req.body.password});
-        if(result.length!==1){throw('user not found')}
+        if(result.length!==1){throw({user:true, password:true})}
         return res.status(200).send({id:result[0]._id});
         //res.status(200).send({})
     }catch(error){return res.status(400).send({error})}
@@ -16,7 +16,7 @@ router.post('/login', async(req, res)=>{
 
 router.post('/register', async(req, res)=>{
     try{
-        if(!req.body.username || !req.body.password){throw('invalid request to server')}
+        if(!req.body.username || !req.body.password){throw({user:(req.body.username?false:true), password:(req.body.password?false:true)})}
         const user = new User({
             username: req.body.username,
             password: req.body.password
